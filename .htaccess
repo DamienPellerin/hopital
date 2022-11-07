@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteRule ^creation-patients$ controllers/addPatientsController.php
+RewriteRule ^liste-patients$ controllers/patientsListController.php
+RewriteRule ^profil-patients$ controllers/profilPatientsController.php
+RewriteRule ^modif-patient$ controllers/modificationPatientController.php
+RewriteRule ^rendez-vous-patients$ controllers/addAppointmentController.php
+RewriteRule ^liste-rendez-vous$ controllers/allAppointmentController.php
+RewriteRule ^rendez-vous-patient$ controllers/appointmentPatientController.php
+RewriteRule ^modif-appointment$ controllers/modifAppointmentController.php
