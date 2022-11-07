@@ -216,7 +216,7 @@ class Patient
     {
         try {
             $pdo = Database::getInstance();
-            $req = $pdo->query('SELECT * FROM patients WHERE id =' . $id . ';');
+            $req = $pdo->query('SELECT * FROM patients WHERE id ='.$id.';');
             $post = $req->fetch(PDO::FETCH_OBJ);
             return $post;
         } catch (PDOException $ex) {

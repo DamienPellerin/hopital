@@ -81,7 +81,8 @@ class Appointment
      */
     public function appointment()
     {
-        $sql = 'INSERT INTO `appointments`(`dateHour`, `idPatients`) VALUES (:dateHour, :idPatients);';
+        $sql = 'INSERT INTO `appointments`(`dateHour`, `idPatients`) 
+                VALUES (:dateHour, :idPatients);';
         $sth = $this->_pdo->prepare($sql);
         $sth->bindValue(':dateHour', $this->getDateHour());
         $sth->bindValue(':idPatients', $this->getIdPatients(), PDO::PARAM_INT);
@@ -98,7 +99,10 @@ class Appointment
     {
         try {
             $pdo = Database::getInstance();
-            $sql = 'SELECT `patients`.`firstname`, `patients`.`lastname`, `appointments`.`id`    FROM `appointments` INNER JOIN `patients` ON `appointments`.`idPatients` = `patients`.`id`;';
+            $sql = 'SELECT `patients`.`firstname`, `patients`.`lastname`, `appointments`.`id`   
+                    FROM `appointments` 
+                    INNER JOIN `patients` 
+                    ON `appointments`.`idPatients` = `patients`.`id`;';
             $sth = $pdo->query($sql);
             return $sth->fetchAll();
         } catch (PDOException $ex) {
@@ -106,29 +110,54 @@ class Appointment
         }
     }
 
-    /**
+     /**
+     * Afficher le rendez-vous du patient
      * @param int $id
      * 
      * @return object
      */
     public static function readAppointment(int $id)
     {
+        $pdo = Database::getInstance();
+        $sql = 'SELECT * FROM appointments WHERE id = :id';
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':id', $id, PDO::PARAM_INT);
+        if ($sth->execute()) {
+            return $sth->fetch();
+        }
+    }
+   
+    /**
+     * affichage des rendez-vous dans le profile patient
+     * @param int $id
+     * 
+     * @return [type]
+     */
+    public static function readProfilAppointment(int $id)
+    {
         try {
             $pdo = Database::getInstance();
-            $sql = 'SELECT * FROM appointments WHERE id = :id';
-            $sth = $pdo->prepare($sql);
-            $sth->bindValue(':id', $id, PDO::PARAM_INT);
-            $sth->execute();
+            $sql = 'SELECT *   
+                    FROM `appointments` 
+                    INNER JOIN `patients` 
+                    ON `appointments`.`idPatients` = `patients`.`id`;';
+            $sth = $pdo->query($sql);
             return $sth->fetch();
         } catch (PDOException $ex) {
             echo $ex->getMessage();
         }
     }
 
-    // modifier le rendez-vous du patient.
+
+    /**
+     * modifier le rendez-vous du patient.
+     * @return [type]
+     */
     public function updateAppointment()
     {
-        $modifyAppointment = 'UPDATE `appointments` SET `dateHour` = :dateHour WHERE `id`= :id';
+        $modifyAppointment = 'UPDATE `appointments` 
+                            SET `dateHour` = :dateHour 
+                            WHERE `id`= :id';
         $sth = Database::getInstance()->prepare($modifyAppointment);
         $sth->bindValue(':dateHour', $this->getDateHour());
         $sth->bindValue(':id', $this->getId());
@@ -139,39 +168,17 @@ class Appointment
         };
     }
 
-    public static function readPatientAppointment(int $id)
+    /**
+     * supprimer un rendez-vous
+     * @param mixed $id
+     * 
+     * @return [type]
+     */
+    public static function deleteAppointment($id)
     {
         try {
             $pdo = Database::getInstance();
-            $sql = 'SELECT patients.lastname, patients.firstname, appointments.datehour FROM patients INNER JOIN appointments ON patients.id = appointments.idPatients WHERE `appointments`.`id` = :id';
-            $sth = $pdo->prepare($sql);
-            $sth->bindValue(':id', $id, PDO::PARAM_INT);
-            $sth->execute();
-            return $sth->fetch();
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
-        }
-    }
-
-    public static function readAppointmentPatient(int $id)
-    {
-        try {
-            $pdo = Database::getInstance();
-            $sql = 'SELECT * FROM appointments WHERE id = :id';
-            $sth = $pdo->prepare($sql);
-            $sth->bindValue(':id', $id, PDO::PARAM_INT);
-            $sth->execute();
-            return $sth->fetch();
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
-        }
-    }
-
-    public static function readAppointmentProfilPatient(int $id)
-    {
-        try {
-            $pdo = Database::getInstance();
-            $sql = 'SELECT * FROM appointments WHERE idPatients = :id';
+            $sql = 'DELETE * FROM `appointments` WHERE `idPatients` = :id';
             $sth = $pdo->prepare($sql);
             $sth->bindValue(':id', $id, PDO::PARAM_INT);
             $sth->execute();

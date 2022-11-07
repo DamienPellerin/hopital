@@ -6,11 +6,11 @@ require_once(__DIR__ . '/../helpers/dataBase.php');
 
 try {
     $id = intval(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
-    $appointment = Appointment::readPatientAppointment($id);
+    $appointment = Appointment::readAppointment($id);
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        //===================== date : Nettoyage et validation =======================
 
+        //===================== date : Nettoyage et validation =======================
         $idPatients = intval(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
         if (empty($idPatients)) {
             $error["id"] = "Le nom du patient est obligatoire!";
@@ -40,7 +40,7 @@ try {
             $isUpdateAppointment = $updateAppointment->updateAppointment();
             if ($isUpdateAppointment == true) {
                 $updateMessage = 'Données mises à jour';
-                $appointment = Appointment::readPatientAppointment($id);
+                $appointment = Appointment::readAppointment($id);
                 var_dump($appointment);
             } else {
                 $updateMessage = 'Une erreur est survenue';

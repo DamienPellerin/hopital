@@ -1,8 +1,13 @@
 <?php
 require_once(__DIR__.'/../helpers/dataBase.php');
 require_once(__DIR__.'/../models/Patient.php');
-
+try{
+    $id = trim(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
 $patients = Patient::readAll();
+} catch (PDOException $e) {
+    die('ERREUR :' . $e->getMessage());
+}
+
     
 
 //if(isset($_GET['page']) && !empty($_GET['page'])){

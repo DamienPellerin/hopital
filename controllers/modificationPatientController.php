@@ -58,7 +58,6 @@ try {
         }
 
         //===================== phone : Nettoyage et validation =======================
-
         $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_NUMBER_INT);
         if (!empty($phone)) {
             $isOk = filter_var($phone, FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => '/' . PHONE_REGEX . '/')));
@@ -66,9 +65,8 @@ try {
                 $error['phone'] =  'Le numéro de téléphone n\'est pas valide';
             }
         }
+        
         //===================== birthdate : Nettoyage et validation =======================
-
-
         $birthdate = filter_input(INPUT_POST, 'birthdate', FILTER_SANITIZE_NUMBER_INT);
         if (!empty($birthdate)) {
             $isOk = filter_var($birthdate, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/' . REGEX_DATE . '/']]);

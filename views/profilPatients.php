@@ -42,6 +42,7 @@
             <tbody>
                 <tr>
                     <td class="patient"><?= date("d-m-Y", strtotime($appointment->dateHour)) ?></td>
+                    
                     <td class="patient"><?= date("H:i", strtotime($appointment->dateHour)) ?></td>
                     <td></td>
                     <td><a href="/modif-appointment?id=<?= $appointment->id ?>">Modifier</a></td>

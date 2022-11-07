@@ -19,6 +19,7 @@
                         <td class="patient"><?= $patient->firstname ?></td>
                         <td class="patient"><?= $patient->lastname ?></td>
                         <td><a href="/rendez-vous-patient?id=<?= $patient->id ?>">voir le rendez-vous</a></td>
+                        <td><a href="/liste-rendez-vous?id=<?= $patient->id ?>">Suprimer</a></td>
                     </tr>
                 <?php
                 }

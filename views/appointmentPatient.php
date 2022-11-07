@@ -20,9 +20,10 @@
                     <td class="patient"><?= date("d-m-Y", strtotime($appointment->dateHour)) ?></td>
                     <td class="patient"><?= date("H:i", strtotime($appointment->dateHour)) ?></td>
                     <td><a href="/modif-appointment?id=<?= $appointment->id ?>">Modifier</a></td>
-                    <td><a href="/liste-appointment?id=<?= $appointment->id ?>">Suprimer</a></td>
+                    <td><a href="/liste-rendez-vous?id=<?= $appointment->id ?>">Suprimer</a></td>
                 </tr>
             </tbody>
         </table>
+         
     </div>
 </div>
