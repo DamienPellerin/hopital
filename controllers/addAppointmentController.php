@@ -32,20 +32,18 @@ try {
         //    }
         //}
 
-        if (empty($error)) {
+
 
             $dateHour = $date . ' ' . $hour;
             // Création d'un nouvel objet PDO.    
             $appointment = new Appointment($dateHour, $idPatients);
             // Appel de la méthode permettant d'ajouter les données dans la base de donnée.
             $isAddedAppointment = $appointment->appointment();
-            
             if ($isAddedAppointment == true) {
                 $updateMessage = 'Le rendez-vous à bien été enregistré';
             } else {
                 $updateMessage = 'Une erreur est survenue';
-            };
-        }
+            };   
     }
 } catch (PDOException $e) {
     die('ERREUR :' . $e->getMessage());

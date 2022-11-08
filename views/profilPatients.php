@@ -40,16 +40,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="patient"><?= date("d-m-Y", strtotime($appointment->dateHour)) ?></td>
-                    
-                    <td class="patient"><?= date("H:i", strtotime($appointment->dateHour)) ?></td>
-                    <td></td>
-                    <td><a href="/modif-appointment?id=<?= $appointment->id ?>">Modifier</a></td>
-                    <td><a href="/liste-patients?id=<?= $patient->id ?>">Suprimer</a></td>
-                </tr>
+                <?php foreach ($appointments as $appointment) { ?>
+                    <tr>
+                        <td class="patient"><?= date("d-m-Y", strtotime($appointment->dateHour)) ?></td>
+                        <td class="patient"><?= date("H:i", strtotime($appointment->dateHour))  ?></td>
+                        <td></td>
+                        <td><a href="/liste-patients?id=<?= $appointment->id ?>">Suprimer</a></td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
+        <?= $message ?? '' ?>
     </div>
+
 </div>
 </div>

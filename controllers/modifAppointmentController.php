@@ -25,27 +25,25 @@ try {
         }
 
         $hour = filter_input(INPUT_POST, 'hour', FILTER_SANITIZE_SPECIAL_CHARS);
-        //f (!empty($hour)) {
+        //if (!empty($hour)) {
         //   $isOk = filter_var($hour, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/' . REGEX_HOURS . '/']]);
         //    if (!$isOk) {
         //        $error['hour'] = "L'heure entrée n'est pas valide!";
         //    }
         //}
 
-        if (empty($error)) {
-            $dateHour = $date . ' ' . $hour;
-            $updateAppointment = new Appointment($dateHour, $id);
-            $updateAppointment->setDateHour($dateHour);
-            $updateAppointment->setId($id);
-            $isUpdateAppointment = $updateAppointment->updateAppointment();
-            if ($isUpdateAppointment == true) {
-                $updateMessage = 'Données mises à jour';
-                $appointment = Appointment::readAppointment($id);
-                var_dump($appointment);
-            } else {
-                $updateMessage = 'Une erreur est survenue';
-            };
-        }
+
+        $dateHour = $date . ' ' . $hour;
+        $updateAppointment = new Appointment($dateHour, $id);
+        $updateAppointment->setDateHour($dateHour);
+        $updateAppointment->setId($id);
+        $isUpdateAppointment = $updateAppointment->updateAppointment();
+        if ($isUpdateAppointment == true) {
+            $updateMessage = 'Données mises à jour';
+            $appointment = Appointment::readAppointment($id);
+        } else {
+            $updateMessage = 'Une erreur est survenue';
+        };
     }
 } catch (PDOException $e) {
     die('ERREUR :' . $e->getMessage());

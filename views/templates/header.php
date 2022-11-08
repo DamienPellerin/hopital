@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../public/assets/css/header.css">
     <link rel="stylesheet" href="../public/assets/css/style.css">
-    <title>MEDICALE CENTER</title>
+    <title>MEDICAL CENTER</title>
 </head>
 
 <body>
@@ -49,9 +49,9 @@
                 </li>
                 </li>
                 <li>
-                    <a href="/rendez-vous-patient">
+                    <a href="/#">
                         <span class="icon"><ion-icon name="arrow-down-outline"></ion-icon></span>
-                        <span class="title">Rendez-vous</span>
+                        <span class="title">Undefined</span>
                     </a>
                 </li>
                 <li>

@@ -71,5 +71,5 @@
 
         </form>
     </div>
-    <p><?= $addMessage ?></p>
+    <p><?= $addMessage ?? '' ?></p>
 </div>

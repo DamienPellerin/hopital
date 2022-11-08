@@ -133,7 +133,6 @@ class Patient
      */
     public static function mailExist(string $mail): bool
     {
-        try {
             $pdo = Database::getInstance();
             $sql = 'SELECT patients.id FROM patients WHERE mail = :mail;';
             $sth = $pdo->prepare($sql);
@@ -146,9 +145,6 @@ class Patient
                     return true;
                 }
             }
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
-        }
     }
 
     /**
@@ -157,7 +153,6 @@ class Patient
      */
     public function addPatient()
     {
-        try {
             $sql = 'INSERT INTO `patients`(`lastname`, `firstname`, `mail`, `phone`, `birthdate`) VALUES (:lastname, :firstname, :mail, :phone, :birthdate );';
             $pdo = Database::getInstance();
             $sth = $pdo->prepare($sql);
@@ -167,9 +162,6 @@ class Patient
             $sth->bindValue(':phone', $this->getPhone());
             $sth->bindValue(':birthdate', $this->getBirthdate());
             return $sth->execute();
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
-        }
     }
 
     /**
@@ -178,14 +170,10 @@ class Patient
      */
     public static function readAll(): array
     {
-        try {
             $pdo = Database::getInstance();
             $sql = 'SELECT `id`, `lastname`, `firstname` FROM `patients`;';
             $sth = $pdo->query($sql);
             return $sth->fetchAll();
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
-        }
     }
 
     // modifier le profil du patient.
@@ -202,7 +190,6 @@ class Patient
 
         if ($sth->execute()) {
             $result = $sth->rowCount();
-            var_dump($result);
             return ($result >= 1) ? true : false;
         };
     }
@@ -214,14 +201,10 @@ class Patient
      */
     public static function displayPatient($id)
     {
-        try {
             $pdo = Database::getInstance();
-            $req = $pdo->query('SELECT * FROM patients WHERE id ='.$id.';');
+            $req = $pdo->query('SELECT * FROM patients WHERE id =' . $id . ';');
             $post = $req->fetch(PDO::FETCH_OBJ);
             return $post;
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
-        }
     }
 
     /**
@@ -231,14 +214,62 @@ class Patient
      * @return [type]
      */
     public static function deletePatient($id): int
-    {
-        try {
+    {  
             $pdo = Database::getInstance();
             $sql = 'DELETE * FROM `patients` WHERE `patient``id` =' . $id . ';';
             $sth = $pdo->prepare($sql);
             return $sth->execute($id);
-        } catch (PDOException $ex) {
-            echo $ex->getMessage();
+    }
+
+    /**
+     * nombre de pages neccessaires
+     * @return [type]
+     */
+    public static function nbPages()
+    {
+        $pdo = Database::getInstance();
+        // On détermine le nombre total de patients
+        $sql = 'SELECT COUNT(`id`) AS total FROM `patients`;';
+        // On prépare la requête
+        $query = $pdo->prepare($sql);
+        // On exécute
+        $query->execute();
+        // On récupère le nombre d'articles
+        $result = $query->fetch(PDO::FETCH_OBJ);
+        $nbPages = intdiv($result->total, 10);
+        // Voir si il y a un reste
+        return ($result->total % 10 > 0) ? $nbPages++ : $nbPages;
+    }
+
+    /**
+     * savoir sur quelle page nous sommes
+     * @return [type]
+     */
+    public static function whichPage()
+    {
+        if (isset($_GET['page'])) {
+            $input = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT);
+            $page = $input;
+        } else {
+            $page = 1;
         }
+        return $page;
+    }
+
+    /**
+     * combien de patients par page
+     * @return [type]
+     */
+    public static function getTen()
+    {
+        $pdo = Database::getInstance();
+        $sql = 'SELECT `patients`.`lastname`, `patients`.`firstname`, `patients`.`id`
+                FROM `patients` ORDER BY `lastname` LIMIT :nbPerPage OFFSET :offset';
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':nbPerPage', 10, PDO::PARAM_INT);
+        $sth->bindValue(':offset', (Patient::whichPage() - 1) * 10, PDO::PARAM_INT);
+        $sth->execute();
+        $result = $sth->fetchAll(PDO::FETCH_OBJ);
+        return $result;
     }
 }

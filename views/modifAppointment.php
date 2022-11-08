@@ -26,7 +26,6 @@
                     </select>
                     <small id="appointment-hourHelp" class="form-text error"><?= $error['appointment-hour'] ?? '' ?></small>
                 </div>
-                <p><?= $updateMessage ?? '' ?></p>
             </div>
     </div>
 
