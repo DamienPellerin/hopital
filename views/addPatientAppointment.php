@@ -1,14 +1,15 @@
 <div class="cards-details">
     <div class="details">
         <div class="clients-details">
-            <h2>Formulaire Ajout Patients</h2>
+            <h2>Rendez-vous patients</h2>
             <a href="#" class="btn">Tout voir</a>
         </div>
         <?php if (SessionFlash::exist()) { ?>
             <?= SessionFlash::get(); ?>
-            <?php } ?>
-            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" id="formUser" enctype="multipart/form-data">
-                <div class="container">
+        <?php } ?>
+        <form method="post" id="formUser" enctype="multipart/form-data">
+        <div class="container">
+            <h2>Patient</h2>
                     <div class="row">
                         <div class="col">
                             <div class="mb-4">
@@ -48,12 +49,35 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col">
+                        <h2>Rendez-vous</h2>
+                        <div class="mb-4">
+                            <!-- Champs jour -->
+                            <input type="date" name="date">
+                            <small id="appointment-dayHelp" class="form-text error"><?= $error['appointment-day'] ?? '' ?></small>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <!-- Champs heure -->
+                            <select name="hour" id="hour" class="form-control" aria-describedby="appointment-hourHelp">
 
-                    <input type="submit" value="Enregistrer le patient" class="btn btn-primary mt-3" id="validForm">
-
+                                <?php foreach ($hours as  $hour) { ?>
+                                    <option><?= $hour ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                            <small id="appointment-hourHelp" class="form-text error"><?= $error['appointment-hour'] ?? '' ?></small>
+                        </div>
+                        <p><?= $updateMessage ?? '' ?></p>
+                    </div>
                 </div>
 
-            </form>
+                <input type="submit" value="Enregistrer le patient" class="btn btn-primary mt-3" id="validForm">
+
+            </div>
+
+        </form>
     </div>
-    <p><?= $addMessage ?? '' ?></p>
 </div>

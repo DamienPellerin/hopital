@@ -1,4 +1,7 @@
 <?php
+
+use LDAP\Result;
+
 require_once(__DIR__ . '/../config/config.php');
 require_once(__DIR__ . '/../helpers/dataBase.php');
 
@@ -133,18 +136,18 @@ class Patient
      */
     public static function mailExist(string $mail): bool
     {
-            $pdo = Database::getInstance();
-            $sql = 'SELECT patients.id FROM patients WHERE mail = :mail;';
-            $sth = $pdo->prepare($sql);
-            $sth->bindValue(':mail', $mail);
-            $succes = $sth->execute();
-            if ($succes) {
-                if (empty($sth->fetch())) {
-                    return false;
-                } else {
-                    return true;
-                }
+        $pdo = Database::getInstance();
+        $sql = 'SELECT patients.id FROM patients WHERE mail = :mail;';
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':mail', $mail);
+        $succes = $sth->execute();
+        if ($succes) {
+            if (empty($sth->fetch())) {
+                return false;
+            } else {
+                return true;
             }
+        }
     }
 
     /**
@@ -153,15 +156,15 @@ class Patient
      */
     public function addPatient()
     {
-            $sql = 'INSERT INTO `patients`(`lastname`, `firstname`, `mail`, `phone`, `birthdate`) VALUES (:lastname, :firstname, :mail, :phone, :birthdate );';
-            $pdo = Database::getInstance();
-            $sth = $pdo->prepare($sql);
-            $sth->bindValue(':lastname', $this->getLastname());
-            $sth->bindValue(':firstname', $this->getFirstname());
-            $sth->bindValue(':mail', $this->getMail());
-            $sth->bindValue(':phone', $this->getPhone());
-            $sth->bindValue(':birthdate', $this->getBirthdate());
-            return $sth->execute();
+        $sql = 'INSERT INTO `patients`(`lastname`, `firstname`, `mail`, `phone`, `birthdate`) VALUES (:lastname, :firstname, :mail, :phone, :birthdate );';
+        $pdo = Database::getInstance();
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':lastname', $this->getLastname());
+        $sth->bindValue(':firstname', $this->getFirstname());
+        $sth->bindValue(':mail', $this->getMail());
+        $sth->bindValue(':phone', $this->getPhone());
+        $sth->bindValue(':birthdate', $this->getBirthdate());
+        return $sth->execute();
     }
 
     /**
@@ -170,10 +173,10 @@ class Patient
      */
     public static function readAll(): array
     {
-            $pdo = Database::getInstance();
-            $sql = 'SELECT `id`, `lastname`, `firstname` FROM `patients`;';
-            $sth = $pdo->query($sql);
-            return $sth->fetchAll();
+        $pdo = Database::getInstance();
+        $sql = 'SELECT `id`, `lastname`, `firstname` FROM `patients`;';
+        $sth = $pdo->query($sql);
+        return $sth->fetchAll();
     }
 
     // modifier le profil du patient.
@@ -191,34 +194,22 @@ class Patient
         if ($sth->execute()) {
             $result = $sth->rowCount();
             return ($result >= 1) ? true : false;
-        };
+        }
+        return false;
     }
 
     /**
+     * Récupération des données patient
      * @param mixed $id
      * 
      * @return [type]
      */
-    public static function displayPatient($id)
+    public static function displayPatient(int $id)
     {
-            $pdo = Database::getInstance();
-            $req = $pdo->query('SELECT * FROM patients WHERE id =' . $id . ';');
-            $post = $req->fetch(PDO::FETCH_OBJ);
-            return $post;
-    }
-
-    /**
-     * supression patient
-     * @param mixed $id
-     * 
-     * @return [type]
-     */
-    public static function deletePatient($id): int
-    {  
-            $pdo = Database::getInstance();
-            $sql = 'DELETE * FROM `patients` WHERE `patient``id` =' . $id . ';';
-            $sth = $pdo->prepare($sql);
-            return $sth->execute($id);
+        $pdo = Database::getInstance();
+        $sth = $pdo->query('SELECT * FROM patients WHERE id =' . $id . ';');
+        $post = $sth->fetch(PDO::FETCH_OBJ);
+        return $post;
     }
 
     /**
@@ -242,10 +233,10 @@ class Patient
     }
 
     /**
-     * savoir sur quelle page nous sommes
+     * page en actuelle
      * @return [type]
      */
-    public static function whichPage()
+    public static function whichPage(): int
     {
         if (isset($_GET['page'])) {
             $input = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT);
@@ -257,19 +248,72 @@ class Patient
     }
 
     /**
-     * combien de patients par page
+     * nb de patients par page
      * @return [type]
      */
     public static function getTen()
     {
         $pdo = Database::getInstance();
         $sql = 'SELECT `patients`.`lastname`, `patients`.`firstname`, `patients`.`id`
-                FROM `patients` ORDER BY `lastname` LIMIT :nbPerPage OFFSET :offset';
+                FROM `patients`  ORDER BY `lastname` LIMIT :nbPerPage OFFSET :offset';
         $sth = $pdo->prepare($sql);
         $sth->bindValue(':nbPerPage', 10, PDO::PARAM_INT);
         $sth->bindValue(':offset', (Patient::whichPage() - 1) * 10, PDO::PARAM_INT);
         $sth->execute();
         $result = $sth->fetchAll(PDO::FETCH_OBJ);
         return $result;
+    }
+
+    /**
+     * supprimer le patient sélectionner et ses rendez-vous
+     * @param mixed $id
+     * 
+     * @return [type]
+     */
+    public static function deletePatient(int $id): bool
+    {
+        $pdo = Database::getInstance(); 
+        $sql = 'DELETE   
+                FROM `patients`
+                WHERE `id` = :id';
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':id', $id, PDO::PARAM_INT);
+        if ($sth->execute()) {
+            $result = $sth->rowCount();
+            return ($result >= 1) ? true : false;
+        }
+        return false;
+    }
+
+    /**
+     * Barre de recherche
+     * @param string $search
+     * 
+     * @return array
+     */
+    public static function searchPatient(string $search = ''): array
+    {
+        if ($search == '') {
+
+            $pdo = Database::getInstance();
+        $sql = 'SELECT `patients`.`lastname`, `patients`.`firstname`, `patients`.`id`
+                FROM `patients`  ORDER BY `lastname` LIMIT :nbPerPage OFFSET :offset';
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':nbPerPage', 10, PDO::PARAM_INT);
+        $sth->bindValue(':offset', (Patient::whichPage() - 1) * 10, PDO::PARAM_INT);
+        $sth->execute();
+        $result = $sth->fetchAll(PDO::FETCH_OBJ);
+        return $result;
+
+        } else {
+            $pdo = Database::getInstance();
+            $sql = 'SELECT `lastname`, `firstname`, `id` FROM `patients` WHERE `lastname` LIKE CONCAT(:search, "%")';
+            $sth = $pdo->prepare($sql);
+            $sth->bindValue(':search', $search);
+            $sth->execute();
+            $result = $sth->fetchAll();
+            return $result;
+        }
+        
     }
 }

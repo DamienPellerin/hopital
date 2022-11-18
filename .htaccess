@@ -7,3 +7,6 @@ RewriteRule ^rendez-vous-patients$ controllers/addAppointmentController.php
 RewriteRule ^liste-rendez-vous$ controllers/allAppointmentController.php
 RewriteRule ^rendez-vous-patient$ controllers/appointmentPatientController.php
 RewriteRule ^modif-appointment$ controllers/modifAppointmentController.php
+RewriteRule ^suprimer-rendez-vous$ controllers/deleteAppointmentController.php
+RewriteRule ^suprimer-patient$ controllers/deletePatientController.php
+RewriteRule ^creation-patient-rendez-vous$ controllers/addPatientAppointmentController.php

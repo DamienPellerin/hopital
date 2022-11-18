@@ -5,8 +5,13 @@ require_once(__DIR__ . '/../models/Appointment.php');
 require_once(__DIR__ . '/../helpers/dataBase.php');
 
 try {
-    $id = trim(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
-    $appointment = Appointment::readAppointment($id);
+    
+    //Récupération de l'ID du rendez-vous
+    $appointmentId = intval(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
+    
+    //Récupération des données du rendez-vous
+    $appointment = Appointment::readAppointment($appointmentId);
+
 } catch (PDOException $e) {
     die('Erreur : ' . $e->getMessage());
 }

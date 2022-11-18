@@ -4,7 +4,9 @@
             <h2>Rendez-vous patients</h2>
             <a href="#" class="btn">Tout voir</a>
         </div>
-
+        <?php if (SessionFlash::exist()) { ?>
+            <?= SessionFlash::get(); ?>
+        <?php } ?>
         <form method="post" id="formUser" enctype="multipart/form-data">
             <div class="col">
                 <div class="mb-4">

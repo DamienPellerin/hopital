@@ -92,18 +92,18 @@ class Appointment
     }
 
     /**
-     * afficher tous les rendez-vous
+     * afficher toutes les données rendez-vous
      * @return array
      */
-    public static function readAllAppointment()
+    public static function readAllAppointment(): array
     {
-            $pdo = Database::getInstance();
-            $sql = 'SELECT `patients`.`firstname`, `patients`.`lastname`, `appointments`.`id`   
+        $pdo = Database::getInstance();
+        $sql = 'SELECT `patients`.`firstname`, `patients`.`lastname`, `appointments`.`id`   
                     FROM `appointments` 
                     INNER JOIN `patients` 
                     ON `appointments`.`idPatients` = `patients`.`id`;';
-            $sth = $pdo->query($sql);
-            return $sth->fetchAll();
+        $sth = $pdo->query($sql);
+        return $sth->fetchAll();
     }
 
     /**
@@ -135,7 +135,6 @@ class Appointment
                 INNER JOIN `patients` 
                 ON `appointments`.`idPatients` = `patients`.`id`
                 WHERE `appointments`.`idPatients` = :id;';
-                
         $sth = $pdo->prepare($sql);
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->execute();
@@ -174,23 +173,9 @@ class Appointment
                 WHERE `id` = :id';
         $sth = $pdo->prepare($sql);
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
-        return $sth->execute();
-    }
-
-    /**
-     * suprimer le patient et ses rendez-vous
-     * @param mixed $id
-     * 
-     * @return [type]
-     */
-    public static function deletePatientAppointment($id)
-    {
-        $pdo = Database::getInstance();
-        $sql = 'DELETE   
-                FROM `patients`
-                WHERE `id` = :id';
-        $sth = $pdo->prepare($sql);
-        $sth->bindValue(':id', $id, PDO::PARAM_INT);
-        return $sth->execute();
+        if ($sth->execute()) {
+            $result = $sth->rowCount();
+            return ($result == 1) ? true : false;
+        }
     }
 }

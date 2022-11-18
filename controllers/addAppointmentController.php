@@ -4,9 +4,11 @@ require_once(__DIR__ . '/../models/Patient.php');
 require_once(__DIR__ . '/../models/Appointment.php');
 require_once(__DIR__ . '/../helpers/dataBase.php');
 
-$patients = Patient::readAll();
-
 try {
+
+    //Récupération de tous les patients
+    $patients = Patient::readAll();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         //===================== date : Nettoyage et validation =======================
@@ -32,18 +34,17 @@ try {
         //    }
         //}
 
+        $dateHour = $date . ' ' . $hour;
+        // Création d'un nouvel objet PDO.    
+        $appointment = new Appointment($dateHour, $idPatients);
+        // Appel de la méthode permettant d'ajouter les données dans la base de donnée.
+        $isAddedAppointment = $appointment->appointment();
 
-
-            $dateHour = $date . ' ' . $hour;
-            // Création d'un nouvel objet PDO.    
-            $appointment = new Appointment($dateHour, $idPatients);
-            // Appel de la méthode permettant d'ajouter les données dans la base de donnée.
-            $isAddedAppointment = $appointment->appointment();
-            if ($isAddedAppointment == true) {
-                $updateMessage = 'Le rendez-vous à bien été enregistré';
-            } else {
-                $updateMessage = 'Une erreur est survenue';
-            };   
+        if ($isAddedAppointment) {
+            SessionFlash::set('Le rendez-vous à bien été enregistré');
+            header('location: /liste-rendez-vous');
+            exit;
+        }
     }
 } catch (PDOException $e) {
     die('ERREUR :' . $e->getMessage());

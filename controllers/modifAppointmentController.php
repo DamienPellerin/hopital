@@ -5,7 +5,11 @@ require_once(__DIR__ . '/../models/Appointment.php');
 require_once(__DIR__ . '/../helpers/dataBase.php');
 
 try {
+
+    //Récupération de l'ID du rendez-vous
     $id = intval(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
+    
+    //Affichage du rendez-vous du patient
     $appointment = Appointment::readAppointment($id);
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -32,18 +36,20 @@ try {
         //    }
         //}
 
-
-        $dateHour = $date . ' ' . $hour;
-        $updateAppointment = new Appointment($dateHour, $id);
-        $updateAppointment->setDateHour($dateHour);
-        $updateAppointment->setId($id);
-        $isUpdateAppointment = $updateAppointment->updateAppointment();
-        if ($isUpdateAppointment == true) {
-            $updateMessage = 'Données mises à jour';
-            $appointment = Appointment::readAppointment($id);
-        } else {
-            $updateMessage = 'Une erreur est survenue';
-        };
+        
+            $dateHour = $date . ' ' . $hour;
+            $updateAppointment = new Appointment($dateHour, $id);
+            $updateAppointment->setDateHour($dateHour);
+            $updateAppointment->setId($id);
+            $isUpdateAppointment = $updateAppointment->updateAppointment();
+            if ($isUpdateAppointment) {
+                SessionFlash::set('Le rendez-vous à bien été modifié');
+            } else {
+                SessionFlash::set('Une erreur est survenue');
+            };
+            header('location: /liste-rendez-vous');
+            exit;
+        
     }
 } catch (PDOException $e) {
     die('ERREUR :' . $e->getMessage());

@@ -1,8 +1,11 @@
 <?php
 require_once(__DIR__ . '/../config/config.php');
 require_once(__DIR__ . '/../models/Patient.php');
+require_once(__DIR__ . '/../models/Appointment.php');
+require_once(__DIR__ . '/../helpers/dataBase.php');
+
 try {
-    
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         //===================== Lastname : Nettoyage et validation =======================
@@ -53,14 +56,14 @@ try {
             $error["mail"] = "L'adresse mail est obligatoire!";
         }
 
-         //===================== phone : Nettoyage et validation =======================
-         $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_NUMBER_INT);
-         if (!empty($phone)) {
-             $isOk = filter_var($phone, FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => '/' . PHONE_REGEX . '/')));
-             if ($isOk == false) {
-                 $error['phone'] =  'Le numéro de téléphone n\'est pas valide';
-             }
-         }
+        //===================== phone : Nettoyage et validation =======================
+        $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_NUMBER_INT);
+        if (!empty($phone)) {
+            $isOk = filter_var($phone, FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => '/' . PHONE_REGEX . '/')));
+            if ($isOk == false) {
+                $error['phone'] =  'Le numéro de téléphone n\'est pas valide';
+            }
+        }
 
         //===================== birthdate : Nettoyage et validation =======================
         $birthdate = filter_input(INPUT_POST, 'birthdate', FILTER_SANITIZE_NUMBER_INT);
@@ -77,31 +80,68 @@ try {
                     $error["birthdate"] = "Votre age n'est pas conforme!";
                 }
             }
-        }
 
-        if (!empty('error')) {
-            $patient = new Patient();
-            $patient->setLastname($lastname);
-            $patient->setFirstname($firstname);
-            $patient->setMail($mail);
-            $patient->setPhone($phone);
-            $patient->setBirthdate($birthdate);
-            $isAddedPatient = $patient->addPatient();
-            
-            if ($isAddedPatient) {
-                SessionFlash::set('Le patient à bien été enregistré');
-            } else {
-                SessionFlash::set('Une erreur est survenue');
+            //===================== date : Nettoyage et validation =======================
+
+            $idPatients = intval(filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT));
+            if (empty($idPatients)) {
+                $error["id"] = "Le nom du patient est obligatoire!";
             }
-            header('location: /liste-patients');
-            exit;
+
+            $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_NUMBER_INT);
+            if (!empty($date)) {
+                $isOk = filter_var($date, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/' . REGEX_DATE . '/']]);
+                if (!$isOk) {
+                    $error["date"] = "La date entrée n'est pas valide!";
+                }
+            }
+
+            $hour = filter_input(INPUT_POST, 'hour', FILTER_SANITIZE_SPECIAL_CHARS);
+            //f (!empty($hour)) {
+            //   $isOk = filter_var($hour, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/' . REGEX_HOURS . '/']]);
+            //    if (!$isOk) {
+            //        $error['hour'] = "L'heure entrée n'est pas valide!";
+            //    }
+            //}
+
+            //methode
+            if (!empty('error')) {
+
+                try {
+                    $pdo = Database::getInstance();
+                    $pdo->beginTransaction();
+
+                    $patient = new Patient();
+                    $patient->setLastname($lastname);
+                    $patient->setFirstname($firstname);
+                    $patient->setMail($mail);
+                    $patient->setPhone($phone);
+                    $patient->setBirthdate($birthdate);
+                    $isAddedPatient = $patient->addPatient();
+
+                    $lastId = $pdo->lastInsertId();
+                    $dateHour = $date . ' ' . $hour;
+
+                    // Création d'un nouvel objet PDO.    
+                    $appointment = new Appointment($dateHour, $lastId);
+                    // Appel de la méthode permettant d'ajouter les données dans la base de donnée.
+                    $isAddedAppointment = $appointment->appointment();
+                    $pdo->commit();
+                    SessionFlash::set('Le patient et le rendez-vous on bien été enregistré');
+                    header('location: /liste-rendez-vous');
+                    exit;
+
+                } catch (\Throwable $th) {
+                    $pdo->rollBack();
+                    die('ERREUR :' . $th->getMessage());
+                }
+            }
         }
     }
 } catch (PDOException $e) {
-    die('Erreur : ' . $e->getMessage());
+    die('ERREUR :' . $e->getMessage());
 }
 
-
 include(__DIR__ . './../views/templates/header.php');
-include(__DIR__ . '/../views/addPatients.php');
+include(__DIR__ . '/../views/addPatientAppointment.php');
 include(__DIR__ . '/../views/templates/footer.php');

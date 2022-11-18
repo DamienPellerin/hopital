@@ -15,7 +15,6 @@
                     <td>Téléphone</td>
                     <td>E-mail</td>
                     <td>N° de Sécurité Sociale</td>
-
                 </tr>
             </thead>
             <tbody>
@@ -50,7 +49,7 @@
                 <?php } ?>
             </tbody>
         </table>
-        <?= $message ?? '' ?>
+        <p><?= $message ?? '' ?></p>
     </div>
 
 </div>

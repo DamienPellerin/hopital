@@ -4,14 +4,16 @@
             <h2>Rendez-vous patients</h2>
             <a href="#" class="btn">Tout voir</a>
         </div>
-
+        <?php if (SessionFlash::exist()) { ?>
+            <?= SessionFlash::get(); ?>
+        <?php } ?>
         <form method="post" id="formUser" enctype="multipart/form-data">
             <div class="container">
                 <div class="row">
                     <div class="col">
                         <select name="id" id="firstname" class="form-control" aria-describedby="firstnameHelp">
                             <?php foreach ($patients as $patient) { ?>
-                                <option value="<?=$patient->id?>"><?= $patient->firstname .' '. $patient->lastname ?></option>
+                                <option value="<?= $patient->id ?>"><?= $patient->firstname . ' ' . $patient->lastname ?></option>
                             <?php
                             }
                             ?>
@@ -20,7 +22,7 @@
                     <div class="col">
                         <div class="mb-4">
                             <!-- Champs jour -->
-                         <input type="date" name="date">
+                            <input type="date" name="date">
                             <small id="appointment-dayHelp" class="form-text error"><?= $error['appointment-day'] ?? '' ?></small>
                         </div>
                     </div>

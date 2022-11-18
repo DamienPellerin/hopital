@@ -4,7 +4,10 @@ require_once(__DIR__ . '/../models/Patient.php');
 require_once(__DIR__ . '/../helpers/dataBase.php');
 
 try {
+    //Récupération de l'ID du patient
     $id = intval(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT));
+
+    //Récupération des données patient
     $patient = Patient::displayPatient($id);
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -64,7 +67,7 @@ try {
                 $error['phone'] =  'Le numéro de téléphone n\'est pas valide';
             }
         }
-        
+
         //===================== birthdate : Nettoyage et validation =======================
         $birthdate = filter_input(INPUT_POST, 'birthdate', FILTER_SANITIZE_NUMBER_INT);
         if (!empty($birthdate)) {
@@ -91,13 +94,13 @@ try {
             $updatedPatient->setMail($mail);
             $updatedPatient->setId($id);
             $isUpdatedPatient = $updatedPatient->update();
-
-            if ($isUpdatedPatient == true) {
-                $updateMessage = 'Données mises à jour';
-                $patient = Patient::displayPatient($id);
+            if ($isUpdatedPatient) {
+                SessionFlash::set('Le patient à bien été modifié');
             } else {
-                $updateMessage = 'Une erreur est survenue';
+                SessionFlash::set('Une erreur est survenue');
             };
+            header('location: /liste-patients');
+            exit;
         }
     }
 } catch (PDOException $e) {

@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+require_once(__DIR__ . '/../helpers/SessionFlash.php');
 define('DSN', 'mysql:host=localhost;dbname=hopital');
 define('USER', 'Damien');
 define('PWD', '_DEa70CcM[LmjRzp');

@@ -33,40 +33,22 @@
                     </a>
                 </li>
                 <li>
-                <li>
                     <a href="/rendez-vous-patients">
                         <span class="icon"><ion-icon name="id-card-outline"></ion-icon></span>
                         <span class="title">Rendez-vous patients</span>
                     </a>
                 </li>
-                </li>
-                <li>
                 <li>
                     <a href="/liste-rendez-vous">
                         <span class="icon"><ion-icon name="people-outline"></ion-icon></span>
                         <span class="title">Liste des rendez-vous</span>
                     </a>
                 </li>
-                </li>
                 <li>
-                    <a href="/#">
-                        <span class="icon"><ion-icon name="arrow-down-outline"></ion-icon></span>
-                        <span class="title">Undefined</span>
+                    <a href="/creation-patient-rendez-vous">
+                        <span class="icon"><ion-icon name="people-outline"></ion-icon></span>
+                        <span class="title">Création patients rendez-vous</span>
                     </a>
-                </li>
-                <li>
-                    <a href="/all-shows">
-                        <span class="icon"><ion-icon name="albums-outline"></ion-icon></span>
-                        <span class="title">Undefined</span>
-                    </a>
-                </li>
-                <li>
-                <li>
-                    <a href="/all-clients">
-                        <span class="icon"><ion-icon name="person-add-outline"></ion-icon></span>
-                        <span class="title">Undefined</span>
-                    </a>
-                </li>
                 </li>
             </ul>
         </div>
